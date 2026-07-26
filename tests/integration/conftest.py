@@ -1,21 +1,20 @@
 import os
+
 import pytest
 import pytest_asyncio
-from sqlalchemy.pool import NullPool
-from sqlalchemy.ext.asyncio import create_async_engine
-from sqlalchemy.ext.asyncio import async_sessionmaker
 from dotenv import load_dotenv
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 
 from models import Base
 from register_user import RegisterUserUnitOfWork
 from utils import FakePasswordHasher
 
-
 load_dotenv()
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_NAME = 'pizza_dicks_test'
-URL = f'mysql+aiomysql://{DB_USER}:{DB_PASSWORD}@localhost:3306/{DB_NAME}'
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = "pizza_dicks_test"
+URL = f"mysql+aiomysql://{DB_USER}:{DB_PASSWORD}@localhost:3306/{DB_NAME}"
 
 
 @pytest_asyncio.fixture(scope="session")
@@ -33,6 +32,12 @@ def session_factory(engine):
     return async_sessionmaker(engine, expire_on_commit=False)
 
 
+@pytest_asyncio.fixture
+async def session(session_factory):
+    async with session_factory() as session:
+        yield session
+
+
 @pytest_asyncio.fixture(autouse=True)
 async def clean_db(session_factory):
     async with session_factory() as session:
@@ -44,8 +49,7 @@ async def clean_db(session_factory):
 
 
 @pytest.fixture
-def register_user_uow(session_factory):
+def register_user_uow(session):
     return RegisterUserUnitOfWork(
-        async_session=session_factory,
-        password_hasher=FakePasswordHasher()
+        async_session=session, password_hasher=FakePasswordHasher()
     )

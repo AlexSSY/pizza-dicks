@@ -1,5 +1,7 @@
 import re
 
+import bcrypt
+
 
 class PasswordValidator:
     def __init__(
@@ -37,3 +39,16 @@ class PasswordValidator:
             )
 
         return password
+
+
+class BCryptPasswordHasher:
+    def hash(self, raw_password: str) -> str:
+        password_bytes = raw_password.encode('utf-8')
+        salt = bcrypt.gensalt(rounds=12)
+        hashed_password = bcrypt.hashpw(password_bytes, salt)
+        return hashed_password
+
+    
+    def verify(self, raw_password: str, hashed_password: str) -> bool:
+        password_bytes = raw_password.encode('utf-8')
+        return bcrypt.checkpw(password_bytes, hashed_password)

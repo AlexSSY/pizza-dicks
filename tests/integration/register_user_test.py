@@ -1,17 +1,16 @@
 import pytest
 
-from register_user import RegisterUserStatus
+from register_user import UserAlreadyExistsError
 from repositories import UserRepository
 from utils import FakePasswordHasher
 
 
 @pytest.mark.asyncio
 async def test_register_user_uow(session_factory, register_user_uow):
-    result = await register_user_uow(
+    await register_user_uow(
         email="test@mail.com",
         password="password"
     )
-    assert result is RegisterUserStatus.SUCCESS
 
     async with session_factory() as session:
         repo = UserRepository(session=session)
@@ -23,14 +22,13 @@ async def test_register_user_uow(session_factory, register_user_uow):
 
 @pytest.mark.asyncio
 async def test_register_existing_user_uow(register_user_uow):
-    result = await register_user_uow(
+    await register_user_uow(
         email="test@mail.com",
         password="password"
     )
-    assert result is RegisterUserStatus.SUCCESS
 
-    result2 = await register_user_uow(
-        email="test@mail.com",
-        password="password123"
-    )
-    assert result2 is RegisterUserStatus.ALREADY_EXISTS
+    with pytest.raises(UserAlreadyExistsError):
+        await register_user_uow(
+            email="test@mail.com",
+            password="password123"
+        )
