@@ -9,6 +9,7 @@ dependencies = [
     "bcrypt>=5.0.0",
     "dotenv>=0.9.9",
     "fastapi>=0.140.0",
+    "httpx>=0.28.1",
     "pydantic[email]>=2.13.4",
     "pymysql[rsa]>=1.2.0",
     "sqlalchemy[asyncio]>=2.0.51",
