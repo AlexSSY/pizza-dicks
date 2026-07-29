@@ -1,11 +1,9 @@
-import pytest
-
 from security import BCryptPasswordHasher
 
 
 def test_when_passwords_match():
     hasher = BCryptPasswordHasher()
-    password = "Airforceproud96"
+    password = "DIEGO"
     hashed_password = hasher.hash(raw_password=password)
     assert hashed_password is not None
     assert len(hashed_password) > 0
@@ -15,7 +13,7 @@ def test_when_passwords_match():
 
 def test_when_passwords_does_not_match():
     hasher = BCryptPasswordHasher()
-    password = "Airforceproud96"
+    password = "DIEGO"
     another_password = "spagetti"
     hashed_password = hasher.hash(raw_password=password)
     assert not hasher.verify(

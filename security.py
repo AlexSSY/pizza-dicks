@@ -46,9 +46,10 @@ class BCryptPasswordHasher:
         password_bytes = raw_password.encode('utf-8')
         salt = bcrypt.gensalt(rounds=12)
         hashed_password = bcrypt.hashpw(password_bytes, salt)
-        return hashed_password
+        return hashed_password.decode('utf-8')
 
     
     def verify(self, raw_password: str, hashed_password: str) -> bool:
         password_bytes = raw_password.encode('utf-8')
-        return bcrypt.checkpw(password_bytes, hashed_password)
+        hashed_password_bytes = hashed_password.encode('utf-8')
+        return bcrypt.checkpw(password_bytes, hashed_password_bytes)

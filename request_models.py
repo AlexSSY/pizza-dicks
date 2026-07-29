@@ -15,5 +15,3 @@ class RegisterUserRequestModel(BaseModel):
         if self.password != self.password_confirmation:
             raise ValueError('Passwords do not match')
         return self
-
-

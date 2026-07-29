@@ -1,9 +1,10 @@
 from fastapi.applications import FastAPI
 
-from infrastructure import CreateAllTablesUnitOfWork
+from auth import router as auth_router, register_exception_handlers as auth_register_exception_handlers
 from db import engine
+from infrastructure import CreateAllTablesUnitOfWork
 from models import Base
-from users import users_router
+from users import register_exception_handlers, users_router
 
 
 async def lifespan(app: FastAPI):
@@ -12,7 +13,10 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(debug=True, lifespan=lifespan)
+register_exception_handlers(app)
+auth_register_exception_handlers(app)
 app.include_router(users_router)
+app.include_router(auth_router)
 
 
 if __name__ == "__main__":
