@@ -1,19 +1,19 @@
 from datetime import UTC, datetime, timedelta
-from typing import TypedDict, cast, Annotated
+from typing import Annotated, TypedDict, cast
 
 import jwt
-from fastapi import FastAPI, APIRouter, Depends, Header, HTTPException, status, Request
+from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException, Request, status
 from fastapi.responses import JSONResponse
 from jwt import InvalidTokenError
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from depends import DbSession
 from interfaces import PasswordHasher
 from models import User
 from repositories import UserRepository
-from settings import settings
-from depends import DbSession
 from security import BCryptPasswordHasher
+from settings import settings
 
 
 class LoginRequestModel(BaseModel):
@@ -43,9 +43,9 @@ class AuthenticationService:
 
     def generate_access_token(self, user: User) -> JsonWebToken:
         return jwt.encode(
-            payload=JwtPayload(
-                sub=str(user.id), exp=datetime.now(UTC) + timedelta(hours=1)
-            ),
+            payload={
+                "sub": str(user.id), "exp": datetime.now(UTC) + timedelta(hours=1)
+            },
             key=settings.secret_key,
             algorithm="HS256",
         )
@@ -149,4 +149,4 @@ async def login_traffic_controller(
         email=login_request_model.email, password=login_request_model.password
     )
     access_token = auth_service.generate_access_token(user=user)
-    return {"access_token": access_token}
+    return LoginResponseModel(access_token=access_token)

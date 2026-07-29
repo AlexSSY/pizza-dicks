@@ -1,4 +1,4 @@
-from typing import Optional
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,11 +9,11 @@ class UserRepository:
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
-    async def find_by_id(self, id: int) -> Optional[User]:
+    async def find_by_id(self, id: int) -> User | None:
         stmt = select(User).where(User.id==id)
         return await self._session.scalar(stmt)
 
-    async def find_by_email(self, email: str) -> Optional[User]:
+    async def find_by_email(self, email: str) -> User | None:
         """
         Returns found user or None if not exists.
         """

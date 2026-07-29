@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from typing import Annotated
 
 from fastapi import Depends
@@ -8,7 +9,7 @@ from register_user import RegisterUserUnitOfWork
 from security import BCryptPasswordHasher
 
 
-async def get_session():
+async def get_session() -> AsyncGenerator[AsyncSession]:
     session = AsyncSessionFactory()
     try:
         yield session
@@ -19,7 +20,7 @@ async def get_session():
 DbSession = Annotated[AsyncSession, Depends(get_session)]
 
 
-async def get_register_user_uow(session: DbSession):
+def get_register_user_uow(session: DbSession) -> RegisterUserUnitOfWork:
     return RegisterUserUnitOfWork(
         async_session=session, password_hasher=BCryptPasswordHasher()
     )

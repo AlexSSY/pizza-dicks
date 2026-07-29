@@ -3,7 +3,6 @@ from sqlalchemy.pool import NullPool
 
 from settings import settings
 
-
 engine = create_async_engine(
     settings.database_url.unicode_string(), echo=True, poolclass=NullPool
 )

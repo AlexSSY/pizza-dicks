@@ -1,6 +1,4 @@
-from pydantic import BaseModel
-from pydantic import EmailStr
-from pydantic import model_validator
+from pydantic import BaseModel, EmailStr, model_validator
 
 from pydantic_ext import PydanticTypes
 
